@@ -1,16 +1,42 @@
+import 'dart:io';
+
 import 'package:logger/logger.dart';
+
+import 'package:shelf/shelf.dart';
+import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:spawn_dart/src/service.dart';
 
 class SpawnSystem {
   final _logger = Logger(
     printer: LogfmtPrinter(),
   );
 
-  late int port;
-  late String host;
+  final _watch = Stopwatch();
+
+  late int serverPort = int.parse(Platform.environment['PORT'] ?? '8080');
+
+  SpawnSystem port(int port) {
+    serverPort = port;
+    return this;
+  }
 
   void registerActor() {
     _logger.d('Registering Actor...');
   }
 
-  Future<void> start() async {}
+  Future<void> start() async {
+    //final port = int.parse(Platform.environment['PORT'] ?? '8080');
+    final controller = Service();
+
+    final server = await shelf_io.serve(
+      logRequests().addHandler(controller.handler),
+      InternetAddress.anyIPv4,
+      serverPort,
+    );
+
+    print('Serving at http://${server.address.host}:${server.port}');
+
+    // Used for tracking uptime of the server.
+    _watch.start();
+  }
 }
