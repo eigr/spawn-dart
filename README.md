@@ -1,39 +1,34 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# Spawn Dart SDK
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages). 
+Dart User Language Support for [Spawn](https://github.com/eigr/spawn).
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages). 
--->
+## Table of Contents
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+1. [Overview](#overview)
+2. [Getting Started](#getting-started)
 
-## Features
+### Overview
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+Spawn is a Stateful Serverless Runtime and Framework basead on the [Actor Model](https://youtu.be/7erJ1DV_Tlo) and operates as a Service Mesh.
 
-## Getting started
+Spawn's main goal is to remove the complexity in developing services or microservices, providing simple and intuitive APIs, as well as a declarative deployment and configuration model and based on a Serverless architecture and Actor Model.
+This leaves the developer to focus on developing the business domain while the platform deals with the complexities and infrastructure needed to support the scalable, resilient, distributed, and event-driven architecture that modern systems requires.
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Spawn is based on the sidecar proxy pattern to provide a polyglot Actor Model framework and platform.
+Spawn's technology stack, built on the [BEAM VM](https://www.erlang.org/blog/a-brief-beam-primer/) (Erlang's virtual machine) and [OTP](https://www.erlang.org/doc/design_principles/des_princ.html), provides support for different languages from its native Actor model.
 
-## Usage
+For more information consult the main repository [documentation](https://github.com/eigr/spawn).
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+### Getting Started
+
+TODO
 
 ```dart
-const like = 'sample';
+import 'package:spawn_dart/spawn_dart.dart';
+
+void main() {
+  var spawnSystem = SpawnSystem();
+
+  spawnSystem.start();
+}
 ```
-
-## Additional information
-
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
