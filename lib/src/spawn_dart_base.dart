@@ -15,17 +15,17 @@ class SpawnSystem {
 
   late int serverPort = int.parse(Platform.environment['PORT'] ?? '8080');
 
-  SpawnSystem port(int port) {
+  SpawnSystem withActor(Type entity) {
+    _logger.d('Registering Actor...');
+    return this;
+  }
+
+  SpawnSystem withPort(int port) {
     serverPort = port;
     return this;
   }
 
-  void registerActor() {
-    _logger.d('Registering Actor...');
-  }
-
   Future<void> start() async {
-    //final port = int.parse(Platform.environment['PORT'] ?? '8080');
     final controller = Service();
 
     final server = await shelf_io.serve(

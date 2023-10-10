@@ -23,12 +23,45 @@ For more information consult the main repository [documentation](https://github.
 
 TODO
 
+```proto
+syntax = "proto3";
+
+package domain;
+
+message State {
+  repeated string languages = 1;
+}
+
+message Request {
+  string language = 1;
+}
+
+message Reply {
+  string response = 1;
+}
+```
+
 ```dart
+import 'package:spawn_app_example/src/generated/protos/domain.pb.dart';
+import 'package:spawn_dart/spawn_dart.dart';
+
+@StatefulNamedActor(
+  'joe',
+  State,
+)
+class JoeActor {
+  @Action()
+  Value setLanguage(Request request, Context ctx) {
+    return Value();
+  }
+}
+```
+
+```dart
+import 'package:spawn_app_example/joe_actor.dart';
 import 'package:spawn_dart/spawn_dart.dart';
 
 void main() {
-  var spawnSystem = SpawnSystem();
-
-  spawnSystem.start();
+  SpawnSystem().withActor(JoeActor).start();
 }
 ```
