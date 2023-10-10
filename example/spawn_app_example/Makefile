@@ -4,9 +4,9 @@ image=eigr/spawn-dart-example:1.0.0
 
 all: build install
 
-run:
+compile-protos:
 
-	dart bin/main.dart
+	protoc --dart_out=grpc:lib/src/generated protos/domain.proto
 
 build:
 
@@ -15,5 +15,9 @@ build:
 install:
 
 	docker push ${image}
+
+run:
+
+	dart bin/main.dart
 
 	
