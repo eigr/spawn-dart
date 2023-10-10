@@ -40,3 +40,42 @@ class SpawnSystem {
     _watch.start();
   }
 }
+
+class SimpleConsoleOutput extends LogOutput {
+  @override
+  void output(OutputEvent event) {
+    for (var line in event.lines) {
+      printOutput(line);
+    }
+  }
+
+  void printOutput(String line) async {
+    stdout.writeln('${DateTime.now()}: $line');
+  }
+}
+
+class SpawnLogFilter extends LogFilter {
+  Level logLevel;
+
+  SpawnLogFilter([this.logLevel = Level.info]);
+
+  @override
+  bool shouldLog(LogEvent event) {
+    if (event.level.index >= logLevel.index) {
+      return true;
+    }
+    return false;
+  }
+}
+
+String capitalize(String string) {
+  if (string == null) {
+    throw ArgumentError('string: $string');
+  }
+
+  if (string.isEmpty) {
+    return string;
+  }
+
+  return string[0].toUpperCase() + string.substring(1);
+}

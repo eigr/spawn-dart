@@ -7,7 +7,7 @@ import 'package:spawn_dart/spawn_dart.dart';
 )
 class JoeActor {
   @Action()
-  Value setLanguage(Request request, Context ctx) {
+  Value setLanguage(Request request, Context<State> ctx) {
     return Value();
   }
 }
