@@ -44,7 +44,7 @@ class ReflectHelper {
   }
 
   static Optional<Any> invoke(
-      Object instance, MethodMirror method, Any payload, Context context) {
+      Object instance, MethodMirror method, Any? payload, Context context) {
     if (payload == null) {
       var instanceMirrorResult =
           reflect(instance).invoke(method.simpleName, []);
@@ -110,15 +110,17 @@ class ReflectHelper {
 
   static Map<String, MethodMirror> getMethodsByAnnotation(
       List<MethodMirror> allDeclaredMethods, Type annotation) {
-    // ignore: omit_local_variable_types
     final Map<String, MethodMirror> methods = {};
     var annotationMirror = reflectClass(annotation);
+
     allDeclaredMethods
-        .where((elem) =>
-            elem.metadata.where((test) => test.type == annotationMirror) !=
-            null)
+        .where((elem) => isMethodAnnotationBy(elem, annotationMirror))
         .forEach(
             (e) => methods[capitalize(MirrorSystem.getName(e.simpleName))] = e);
     return methods;
   }
+
+  static bool isMethodAnnotationBy(
+          MethodMirror method, ClassMirror annotationMirror) =>
+      method.metadata.where((test) => test.type == annotationMirror).isNotEmpty;
 }
