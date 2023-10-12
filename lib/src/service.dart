@@ -26,10 +26,10 @@ class Service {
     final router = Router();
 
     router.post('/api/v1/actors/actions', (Request request) async {
-      List<int> byteBody = await request.read().first;
+      List<int> bodyBuffer = await request.read().first;
 
       ActorInvocation actorInvocationRequest =
-          ActorInvocation.fromBuffer(byteBody);
+          ActorInvocation.fromBuffer(bodyBuffer);
 
       _logger.d("Received Actor Invocation Request: $actorInvocationRequest");
 
