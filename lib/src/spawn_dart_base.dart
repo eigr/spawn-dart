@@ -57,7 +57,7 @@ class SimpleConsoleOutput extends LogOutput {
 class SpawnLogFilter extends LogFilter {
   Level logLevel;
 
-  SpawnLogFilter([this.logLevel = Level.info]);
+  SpawnLogFilter([this.logLevel = Level.debug]);
 
   @override
   bool shouldLog(LogEvent event) {
@@ -68,7 +68,7 @@ class SpawnLogFilter extends LogFilter {
   }
 }
 
-String capitalize(String string) {
+String capitalize(String? string) {
   if (string == null) {
     throw ArgumentError('string: $string');
   }

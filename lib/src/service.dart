@@ -3,9 +3,16 @@ import 'dart:typed_data';
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:spawn_dart/spawn_dart.dart';
 import 'package:spawn_dart/src/protocol/eigr/functions/protocol/actors/protocol.pb.dart';
 
 class Service {
+  static final _logger = Logger(
+    filter: SpawnLogFilter(),
+    printer: LogfmtPrinter(),
+    output: SimpleConsoleOutput(),
+  );
+
   static const _headers = {
     'content-type': 'application/octet-stream',
   };
@@ -19,11 +26,15 @@ class Service {
     final router = Router();
 
     router.post('/api/v1/actors/actions', (Request request) async {
-      ActorInvocation actorInvocationRequest =
-          ActorInvocation.fromBuffer(request.read().toList() as List<int>);
+      List<int> byteBody = await request.read().first;
 
-      ActorInvocationResponse response = ActorInvocationResponse.getDefault();
-      response.actorName = 'test';
+      ActorInvocation actorInvocationRequest =
+          ActorInvocation.fromBuffer(byteBody);
+
+      _logger.d("Received Actor Invocation Request: $actorInvocationRequest");
+
+      ActorInvocationResponse response = ActorInvocationResponse.create()
+        ..actorName = 'test';
 
       Uint8List actorInvocationResp = response.writeToBuffer();
 
