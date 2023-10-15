@@ -7,8 +7,10 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:spawn_dart/src/service.dart';
 
 class SpawnSystem {
-  final _logger = Logger(
+  static final _logger = Logger(
+    filter: SpawnLogFilter(),
     printer: LogfmtPrinter(),
+    output: SimpleConsoleOutput(),
   );
 
   final _watch = Stopwatch();
@@ -34,7 +36,7 @@ class SpawnSystem {
       serverPort,
     );
 
-    print('Serving at http://${server.address.host}:${server.port}');
+    _logger.i('Serving at http://${server.address.host}:${server.port}');
 
     // Used for tracking uptime of the server.
     _watch.start();

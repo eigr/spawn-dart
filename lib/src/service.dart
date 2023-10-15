@@ -34,7 +34,7 @@ class Service {
       _logger.d("Received Actor Invocation Request: $actorInvocationRequest");
 
       ActorInvocationResponse response = ActorInvocationResponse.create()
-        ..actorName = 'test';
+        ..actorName = actorInvocationRequest.actor.name;
 
       Uint8List actorInvocationResp = response.writeToBuffer();
 
