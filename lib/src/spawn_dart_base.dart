@@ -1,10 +1,15 @@
 import 'dart:io';
 
-import 'package:logger/logger.dart';
-
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
+import 'package:spawn_dart/spawn_dart.dart';
+import 'package:spawn_dart/src/actor_handler.dart';
 import 'package:spawn_dart/src/service.dart';
+import 'package:spawn_dart/src/stateful_named_actor_handler.dart';
+import 'package:spawn_dart/src/stateful_unnamed_actor_handler.dart';
+import 'package:spawn_dart/src/stateless_named_actor_handler.dart';
+import 'package:spawn_dart/src/stateless_pooled_actor_handler.dart';
+import 'package:spawn_dart/src/stateless_unnamed_actor_handler.dart';
 
 class SpawnSystem {
   static final _logger = Logger(
@@ -14,11 +19,46 @@ class SpawnSystem {
   );
 
   final _watch = Stopwatch();
-
   late int serverPort = int.parse(Platform.environment['PORT'] ?? '8080');
+  Map<String, ActorHandler> actorHandlers = {};
 
-  SpawnSystem withActor(Type entity) {
-    _logger.d('Registering Actor...');
+  SpawnSystem withStatefulNamedActor(Type entity) {
+    _logger.d('Registering StatefulNamedActor...');
+    ActorHandler actorHandler = StatefulNamedActorHandler(entity);
+    String actorName = actorHandler.getRegisteredName();
+    actorHandlers[actorName] = actorHandler;
+    return this;
+  }
+
+  SpawnSystem withStatefulUnNamedActor(Type entity) {
+    _logger.d('Registering StatefulUnNamedActor...');
+    ActorHandler actorHandler = StatefulUnNamedActorHandler(entity);
+    String actorName = actorHandler.getRegisteredName();
+    actorHandlers[actorName] = actorHandler;
+    return this;
+  }
+
+  SpawnSystem withStatelessNamedActor(Type entity) {
+    _logger.d('Registering StatelessNamedActor...');
+    ActorHandler actorHandler = StatelessNamedActorHandler(entity);
+    String actorName = actorHandler.getRegisteredName();
+    actorHandlers[actorName] = actorHandler;
+    return this;
+  }
+
+  SpawnSystem withStatelessUnNamedActor(Type entity) {
+    _logger.d('Registering StatelessUnNamedActor...');
+    ActorHandler actorHandler = StatelessUnNamedActorHandler(entity);
+    String actorName = actorHandler.getRegisteredName();
+    actorHandlers[actorName] = actorHandler;
+    return this;
+  }
+
+  SpawnSystem withStatelessPooledActor(Type entity) {
+    _logger.d('Registering StatelessPooledActor...');
+    ActorHandler actorHandler = StatelessPooledActorHandler(entity);
+    String actorName = actorHandler.getRegisteredName();
+    actorHandlers[actorName] = actorHandler;
     return this;
   }
 
@@ -28,7 +68,7 @@ class SpawnSystem {
   }
 
   Future<void> start() async {
-    final controller = Service();
+    final controller = Service(actorHandlers);
 
     final server = await shelf_io.serve(
       logRequests().addHandler(controller.handler),

@@ -15,3 +15,5 @@ class Context<T> {
 }
 
 class Value {}
+
+class ActorRef {}

@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:spawn_dart/spawn_dart.dart';
+import 'package:spawn_dart/src/actor_handler.dart';
 import 'package:spawn_dart/src/protocol/eigr/functions/protocol/actors/protocol.pb.dart';
 
 class Service {
@@ -21,6 +22,12 @@ class Service {
     final version = Platform.version;
     return version.substring(0, version.indexOf(' '));
   }();
+
+  late Map<String, ActorHandler> actorHandlers;
+
+  Service(Map<String, ActorHandler> actorHandlers) {
+    actorHandlers = actorHandlers;
+  }
 
   Handler get handler {
     final router = Router();

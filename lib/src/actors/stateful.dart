@@ -27,22 +27,3 @@ class StatefulUnNamedActor {
       this.snapshotTimeout = 50000,
       this.channel = '']);
 }
-
-class StatefulPooledActor {
-  final String name;
-  final String channel;
-  final Type stateType;
-  final int deactivatedTimeout;
-  final int snapshotTimeout;
-  final int minPoolSize;
-  final int maxPoolSize;
-
-  const StatefulPooledActor(
-      [this.name = '',
-      this.channel = '',
-      this.stateType = Object,
-      this.deactivatedTimeout = 10000,
-      this.snapshotTimeout = 50000,
-      this.minPoolSize = 1,
-      this.maxPoolSize = 0]);
-}
