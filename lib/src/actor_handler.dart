@@ -4,5 +4,5 @@ import 'package:spawn_dart/src/protocol/eigr/functions/protocol/actors/protocol.
 abstract class ActorHandler {
   ActorRef getActorRef();
   String getRegisteredName();
-  ActorInvocationResponse invoke(ActorInvocation invocation);
+  ActorInvocationResponse handleInvoke(ActorInvocation invocation);
 }

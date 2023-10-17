@@ -30,9 +30,8 @@ class StatefulNamedActorHandler implements ActorHandler {
   }
 
   @override
-  ActorInvocationResponse invoke(ActorInvocation invocation) {
-    // TODO: implement invoke
-    throw UnimplementedError();
+  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
+    return ActorInvocationResponse.create()..actorName = invocation.actor.name;
   }
 
   @override

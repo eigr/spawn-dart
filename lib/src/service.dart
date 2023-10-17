@@ -23,9 +23,11 @@ class Service {
     return version.substring(0, version.indexOf(' '));
   }();
 
+  late String system;
   late Map<String, ActorHandler> actorHandlers;
 
-  Service(Map<String, ActorHandler> actorHandlers) {
+  Service(String system, Map<String, ActorHandler> actorHandlers) {
+    system = system;
     actorHandlers = actorHandlers;
   }
 
@@ -33,26 +35,38 @@ class Service {
     final router = Router();
 
     router.post('/api/v1/actors/actions', (Request request) async {
-      List<int> bodyBuffer = await request.read().first;
-
-      ActorInvocation actorInvocationRequest =
-          ActorInvocation.fromBuffer(bodyBuffer);
+      ActorInvocation actorInvocationRequest = await _parse(request);
 
       _logger.d("Received Actor Invocation Request: $actorInvocationRequest");
-
-      ActorInvocationResponse response = ActorInvocationResponse.create()
-        ..actorName = actorInvocationRequest.actor.name;
-
-      Uint8List actorInvocationResp = response.writeToBuffer();
-
-      return Response.ok(
-        actorInvocationResp,
-        headers: {
-          ..._headers,
-        },
-      );
+      return _handleInvocation(actorInvocationRequest);
     });
 
     return router;
+  }
+
+  Future<ActorInvocation> _parse(Request request) async {
+    List<int> bodyBuffer = await request.read().first;
+
+    return ActorInvocation.fromBuffer(bodyBuffer);
+  }
+
+  Response _handleInvocation(ActorInvocation actorInvocationRequest) {
+    ActorInvocationResponse response;
+    if (actorInvocationRequest.actor.system == system &&
+        actorHandlers.containsKey(actorInvocationRequest.actor.name)) {
+      ActorHandler handler = actorHandlers[actorInvocationRequest.actor.name]!;
+      response = handler.handleInvoke(actorInvocationRequest);
+    } else {
+      response = ActorInvocationResponse.create();
+    }
+
+    Uint8List actorInvocationResp = response.writeToBuffer();
+
+    return Response.ok(
+      actorInvocationResp,
+      headers: {
+        ..._headers,
+      },
+    );
   }
 }

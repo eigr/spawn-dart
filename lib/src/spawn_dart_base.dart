@@ -20,7 +20,18 @@ class SpawnSystem {
 
   final _watch = Stopwatch();
   late int serverPort = int.parse(Platform.environment['PORT'] ?? '8080');
+  late String actorSystem;
   Map<String, ActorHandler> actorHandlers = {};
+
+  SpawnSystem create(String system) {
+    actorSystem = system;
+    return this;
+  }
+
+  SpawnSystem withPort(int port) {
+    serverPort = port;
+    return this;
+  }
 
   SpawnSystem withStatefulNamedActor(Type entity) {
     _logger.d('Registering StatefulNamedActor...');
@@ -62,13 +73,8 @@ class SpawnSystem {
     return this;
   }
 
-  SpawnSystem withPort(int port) {
-    serverPort = port;
-    return this;
-  }
-
   Future<void> start() async {
-    final controller = Service(actorHandlers);
+    final controller = Service(actorSystem, actorHandlers);
 
     final server = await shelf_io.serve(
       logRequests().addHandler(controller.handler),

@@ -20,7 +20,7 @@ class StatelessNamedActorHandler implements ActorHandler {
   }
 
   @override
-  ActorInvocationResponse invoke(ActorInvocation invocation) {
+  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
     // TODO: implement invoke
     throw UnimplementedError();
   }
