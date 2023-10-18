@@ -47,25 +47,6 @@ class StatefulNamedActorHandler implements ActorHandler {
   }
 
   @override
-  spawn_protocol.ActorInvocationResponse handleInvoke(
-      spawn_protocol.ActorInvocation invocation) {
-    // TODO: implement invoke
-    Optional<Object> actorInstance =
-        Optional.of(ReflectHelper.createInstance(actorEntityType!));
-
-    if (actorInstance.isEmpty) {
-      throw StateError("Actor not found Or error during instance creation");
-    }
-
-    spawn_protocol.ActorInvocationResponse response =
-        spawn_protocol.ActorInvocationResponse.create()
-          ..actorName = invocation.actor.name
-          ..actorSystem = invocation.actor.system
-          ..updatedContext = spawn_protocol.Context.create();
-    return response;
-  }
-
-  @override
   String getRegisteredName() {
     String? name = _statefulNamedActorAnnotationInstance?.name;
 
@@ -74,5 +55,28 @@ class StatefulNamedActorHandler implements ActorHandler {
     }
 
     return name;
+  }
+
+  @override
+  spawn_protocol.ActorInvocationResponse handleInvoke(
+      spawn_protocol.ActorInvocation invocation) {
+    // TODO: implement invoke
+    Optional<Object> actorInstance =
+        Optional.of(ReflectHelper.createInstance(actorEntityType!));
+
+    if (actorInstance.isEmpty) {
+      throw StateError(
+          "Actor ${invocation.actor.name} not found or error during instance creation");
+    }
+
+    if (actions.containsKey(invocation.actionName)) {
+      return spawn_protocol.ActorInvocationResponse.create()
+        ..actorName = invocation.actor.name
+        ..actorSystem = invocation.actor.system
+        ..updatedContext = spawn_protocol.Context.create();
+    }
+
+    throw ArgumentError(
+        "Action ${invocation.actionName} not found for Actor ${invocation.actor.name}.");
   }
 }
