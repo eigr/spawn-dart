@@ -23,12 +23,12 @@ class Service {
     return version.substring(0, version.indexOf(' '));
   }();
 
-  late String system;
-  late Map<String, ActorHandler> actorHandlers;
+  late String spawnSystem;
+  late Map<String, ActorHandler> spawnActorHandlers;
 
   Service(String system, Map<String, ActorHandler> actorHandlers) {
-    system = system;
-    actorHandlers = actorHandlers;
+    spawnSystem = system;
+    spawnActorHandlers = actorHandlers;
   }
 
   Handler get handler {
@@ -52,9 +52,10 @@ class Service {
 
   Response _handleInvocation(ActorInvocation actorInvocationRequest) {
     ActorInvocationResponse response;
-    if (actorInvocationRequest.actor.system == system &&
-        actorHandlers.containsKey(actorInvocationRequest.actor.name)) {
-      ActorHandler handler = actorHandlers[actorInvocationRequest.actor.name]!;
+    if (actorInvocationRequest.actor.system == spawnSystem &&
+        spawnActorHandlers.containsKey(actorInvocationRequest.actor.name)) {
+      ActorHandler handler =
+          spawnActorHandlers[actorInvocationRequest.actor.name]!;
       response = handler.handleInvoke(actorInvocationRequest);
     } else {
       response = ActorInvocationResponse.create();

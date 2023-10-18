@@ -25,12 +25,6 @@ class StatefulUnNamedActorHandler implements ActorHandler {
   }
 
   @override
-  ActorRef getActorRef() {
-    // TODO: implement getActorRef
-    return ActorRef();
-  }
-
-  @override
   ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
     // TODO: implement invoke
     throw UnimplementedError();
@@ -38,7 +32,13 @@ class StatefulUnNamedActorHandler implements ActorHandler {
 
   @override
   String getRegisteredName() {
-    // TODO: implement getRegisteredName
-    return "";
+    String? name = statefulUnNamedActorAnnotationInstance?.name;
+    MirrorSystem.getName(_mirror!.simpleName);
+
+    if (name == null || name.isEmpty) {
+      return MirrorSystem.getName(_mirror!.simpleName);
+    }
+
+    return name;
   }
 }

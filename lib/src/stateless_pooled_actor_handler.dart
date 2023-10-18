@@ -14,12 +14,6 @@ class StatelessPooledActorHandler implements ActorHandler {
   }
 
   @override
-  ActorRef getActorRef() {
-    // TODO: implement getActorRef
-    return ActorRef();
-  }
-
-  @override
   ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
     // TODO: implement invoke
     throw UnimplementedError();

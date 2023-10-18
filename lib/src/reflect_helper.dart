@@ -13,33 +13,20 @@ class ReflectHelper {
     output: SimpleConsoleOutput(),
   );
 
-  static Object createInstance(Type type,
-      [Context? context,
-      Symbol? constructor,
-      List? arguments,
-      Map<Symbol, dynamic>? namedArguments]) {
-    arguments = [];
-    constructor = Symbol('');
+  static Object createInstance(Type type) {
+    List? arguments = [];
+    Map<Symbol, dynamic>? namedArguments = {};
+    Symbol? constructor = Symbol('');
 
     var typeMirror = reflectType(type);
 
     if (typeMirror is ClassMirror) {
-      var constructors =
-          List.from(typeMirror.declarations.values.where((declare) {
-        return declare is MethodMirror && declare.isConstructor;
-      }));
-
-      if (constructors.isEmpty) {
-        return typeMirror
-            .newInstance(constructor, arguments, namedArguments!)
-            .reflectee;
-      }
-
-      throw ArgumentError(
-          "Cannot create the instance of the Actor type '$type'.");
+      return typeMirror
+          .newInstance(constructor, arguments, namedArguments)
+          .reflectee;
     } else {
       throw ArgumentError(
-          "Cannot create the instance of the Actor type '$type'.");
+          "Cannot create the instance of the Actor type '$type'. For now, it is not allowed to define Class Constructors for Actors");
     }
   }
 

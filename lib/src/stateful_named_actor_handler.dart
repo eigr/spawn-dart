@@ -1,42 +1,64 @@
 import 'dart:mirrors';
 
+import 'package:optional/optional.dart';
 import 'package:spawn_dart/spawn_dart.dart';
 import 'package:spawn_dart/src/actor_handler.dart';
-import 'package:spawn_dart/src/protocol/eigr/functions/protocol/actors/protocol.pb.dart';
+import 'package:spawn_dart/src/protocol/eigr/functions/protocol/actors/protocol.pb.dart'
+    as spawn_protocol;
+import 'package:spawn_dart/src/reflect_helper.dart';
 
 class StatefulNamedActorHandler implements ActorHandler {
-  Type? actorEntity;
+  Type? actorEntityType;
   DeclarationMirror? _mirror;
-  StatefulNamedActor? statefulNamedActorAnnotationInstance;
+  StatefulNamedActor? _statefulNamedActorAnnotationInstance;
+  List<MethodMirror> _allDeclaredMethods = [];
 
   StatefulNamedActorHandler(Type actorEntity) {
-    actorEntity = actorEntity;
-    _mirror = reflectClass(actorEntity);
+    actorEntityType = actorEntity;
+    _mirror = reflectClass(actorEntityType!);
 
     var statefulActorAnnotationMirror = reflectClass(StatefulNamedActor);
     final InstanceMirror? statefulActorAnnotationInstanceMirror = _mirror
         ?.metadata
         .firstWhere((d) => d.type == statefulActorAnnotationMirror);
 
-    statefulNamedActorAnnotationInstance =
+    _statefulNamedActorAnnotationInstance =
         (statefulActorAnnotationInstanceMirror?.reflectee
             as StatefulNamedActor);
+
+    if (_allDeclaredMethods.isEmpty) {
+      _allDeclaredMethods =
+          ReflectHelper.getAllMethods(reflectClass(_mirror.runtimeType));
+    }
   }
 
   @override
-  ActorRef getActorRef() {
-    // TODO: implement getActorRef
-    return ActorRef();
-  }
+  spawn_protocol.ActorInvocationResponse handleInvoke(
+      spawn_protocol.ActorInvocation invocation) {
+    // TODO: implement invoke
+    Optional<Object> actorInstance =
+        Optional.of(ReflectHelper.createInstance(actorEntityType!));
 
-  @override
-  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
-    return ActorInvocationResponse.create()..actorName = invocation.actor.name;
+    if (actorInstance.isEmpty) {
+      throw StateError("Actor not found Or error during instance creation");
+    }
+
+    spawn_protocol.ActorInvocationResponse response =
+        spawn_protocol.ActorInvocationResponse.create()
+          ..actorName = invocation.actor.name
+          ..actorSystem = invocation.actor.system
+          ..updatedContext = spawn_protocol.Context.create();
+    return response;
   }
 
   @override
   String getRegisteredName() {
-    // TODO: implement getRegisteredName
-    return "";
+    String? name = _statefulNamedActorAnnotationInstance?.name;
+
+    if (name == null || name.isEmpty) {
+      return MirrorSystem.getName(_mirror!.simpleName);
+    }
+
+    return name;
   }
 }
