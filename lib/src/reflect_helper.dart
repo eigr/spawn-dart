@@ -98,16 +98,42 @@ class ReflectHelper {
   static Map<String, MethodMirror> getMethodsByAnnotation(
       List<MethodMirror> allDeclaredMethods, Type annotation) {
     final Map<String, MethodMirror> methods = {};
-    var annotationMirror = reflectClass(annotation);
+    ClassMirror annotationMirror = reflectClass(annotation);
 
     allDeclaredMethods
         .where((elem) => isMethodAnnotationBy(elem, annotationMirror))
-        .forEach(
-            (e) => methods[capitalize(MirrorSystem.getName(e.simpleName))] = e);
+        .forEach((e) {
+      Optional<Object> annotationAction = getMethodAnnotation(e, Action);
+
+      if (annotationAction.isPresent) {
+        Action actionMetadata = annotationAction.value as Action;
+        if (actionMetadata.name.isNotEmpty) {
+          methods[actionMetadata.name] = e;
+        } else {
+          methods[MirrorSystem.getName(e.simpleName)] = e;
+        }
+      } else {
+        methods[MirrorSystem.getName(e.simpleName)] = e;
+      }
+    });
     return methods;
   }
 
   static bool isMethodAnnotationBy(
           MethodMirror method, ClassMirror annotationMirror) =>
       method.metadata.where((test) => test.type == annotationMirror).isNotEmpty;
+
+  static Optional<Object> getMethodAnnotation(
+      DeclarationMirror declaration, Type annotation) {
+    for (var instance in declaration.metadata) {
+      if (instance.hasReflectee) {
+        var reflectee = instance.reflectee;
+        if (reflectee.runtimeType == annotation) {
+          return Optional.of(reflectee);
+        }
+      }
+    }
+
+    return Optional.empty();
+  }
 }

@@ -8,10 +8,16 @@ import 'package:spawn_dart/src/protocol/eigr/functions/protocol/actors/protocol.
 import 'package:spawn_dart/src/reflect_helper.dart';
 
 class StatefulNamedActorHandler implements ActorHandler {
+  static final _logger = Logger(
+    filter: SpawnLogFilter(),
+    printer: LogfmtPrinter(),
+    output: SimpleConsoleOutput(),
+  );
+
+  final Map<String, MethodMirror> actions = {};
   Type? actorEntityType;
-  DeclarationMirror? _mirror;
+  ClassMirror? _mirror;
   StatefulNamedActor? _statefulNamedActorAnnotationInstance;
-  List<MethodMirror> _allDeclaredMethods = [];
 
   StatefulNamedActorHandler(Type actorEntity) {
     actorEntityType = actorEntity;
@@ -26,9 +32,17 @@ class StatefulNamedActorHandler implements ActorHandler {
         (statefulActorAnnotationInstanceMirror?.reflectee
             as StatefulNamedActor);
 
-    if (_allDeclaredMethods.isEmpty) {
-      _allDeclaredMethods =
-          ReflectHelper.getAllMethods(reflectClass(_mirror.runtimeType));
+    List<MethodMirror> allDeclaredMethods =
+        ReflectHelper.getAllMethods(_mirror!);
+
+    actions.addAll(
+        ReflectHelper.getMethodsByAnnotation(allDeclaredMethods, Action));
+
+    if (actions.isEmpty) {
+      var methodLength = allDeclaredMethods.length;
+
+      _logger.w(
+          "No Actions were found for this Actor Handler. However, there are $methodLength declared methods.");
     }
   }
 
