@@ -30,14 +30,14 @@ class ReflectHelper {
     }
   }
 
-  static Optional<Any> invoke(
+  static Optional<Value> invoke(
       Object instance, MethodMirror method, Any? payload, Context context) {
     if (payload == null) {
       var instanceMirrorResult =
           reflect(instance).invoke(method.simpleName, []);
 
-      var result = Any.pack(instanceMirrorResult.reflectee);
-      _logger.d('\nResult: $instanceMirrorResult.\nType result:\n$result');
+      var result = instanceMirrorResult.reflectee;
+      _logger.d('Result: $instanceMirrorResult. Type result: $result');
 
       return Optional.of(result);
     }
@@ -47,8 +47,8 @@ class ReflectHelper {
 
       var instanceMirrorResult =
           reflect(instance).invoke(method.simpleName, []);
-      var result = Any.pack(instanceMirrorResult.reflectee);
-      _logger.d('\nResult: $instanceMirrorResult.\nType result:\n$result');
+      var result = instanceMirrorResult.reflectee;
+      _logger.d('Result: $instanceMirrorResult. Type result: $result');
 
       return Optional.of(result);
     } else {
@@ -71,17 +71,17 @@ class ReflectHelper {
       var instanceMirrorResult =
           reflect(instance).invoke(method.simpleName, arguments);
       _logger.d('Invoke response $instanceMirrorResult');
+
       if (MirrorSystem.getName(instanceMirrorResult.type.simpleName) !=
           'Null') {
         _logger.d(
             'InstanceMirrorResult not null. ${MirrorSystem.getName(instanceMirrorResult.type.simpleName)}');
 
-        var result = Any.pack(instanceMirrorResult.reflectee);
-        _logger.d('\nResult: $instanceMirrorResult.\nType result:\n$result');
+        var result = instanceMirrorResult.reflectee;
+        _logger.d('Result: $instanceMirrorResult. Type result: $result');
 
         return Optional.ofNullable(result);
       } else {
-        //handle void or null responses
         _logger.d('Handle void or null responses');
         return Optional.empty();
       }

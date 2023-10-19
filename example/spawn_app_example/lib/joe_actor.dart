@@ -7,7 +7,11 @@ import 'package:spawn_dart/spawn_dart.dart';
 )
 class JoeActor {
   @Action()
-  Value setLanguage(Request request, Context<State> ctx) {
+  Value setLanguage(Request request, Context ctx) {
+    if (ctx.getState().isPresent) {
+      var currentState = ctx.getState().value as State;
+      print("Current state is $currentState");
+    }
     return Value();
   }
 }

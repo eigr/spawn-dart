@@ -1,8 +1,10 @@
 import 'dart:mirrors';
 
 import 'package:optional/optional.dart';
+import 'package:protobuf/protobuf.dart';
 import 'package:spawn_dart/spawn_dart.dart';
 import 'package:spawn_dart/src/actor_handler.dart';
+import 'package:spawn_dart/src/google/protobuf/any.pb.dart';
 import 'package:spawn_dart/src/protocol/eigr/functions/protocol/actors/protocol.pb.dart'
     as spawn_protocol;
 import 'package:spawn_dart/src/reflect_helper.dart';
@@ -60,7 +62,6 @@ class StatefulNamedActorHandler implements ActorHandler {
   @override
   spawn_protocol.ActorInvocationResponse handleInvoke(
       spawn_protocol.ActorInvocation invocation) {
-    // TODO: implement invoke
     Optional<Object> actorInstance =
         Optional.of(ReflectHelper.createInstance(actorEntityType!));
 
@@ -70,13 +71,44 @@ class StatefulNamedActorHandler implements ActorHandler {
     }
 
     if (actions.containsKey(invocation.actionName)) {
-      return spawn_protocol.ActorInvocationResponse.create()
-        ..actorName = invocation.actor.name
-        ..actorSystem = invocation.actor.system
-        ..updatedContext = spawn_protocol.Context.create();
+      MethodMirror method = actions[invocation.actionName]!;
+
+      final payload = switch (invocation.whichPayload()) {
+        spawn_protocol.ActorInvocation_Payload.value => invocation.value,
+        spawn_protocol.ActorInvocation_Payload.noop => null,
+        _ => null,
+      };
+
+      Optional<Value> result =
+          _doCall(invocation, actorInstance, method, payload);
+
+      if (result.isPresent) {
+        Value value = result.value;
+        return spawn_protocol.ActorInvocationResponse.create()
+          ..actorName = invocation.actor.name
+          ..actorSystem = invocation.actor.system
+          ..updatedContext = spawn_protocol.Context.create();
+      }
     }
 
     throw ArgumentError(
-        "Action ${invocation.actionName} not found for Actor ${invocation.actor.name}.");
+        "Action ${invocation.actionName} not found for Actor ${invocation.actor.name} or Unknown exception during action processing.");
+  }
+
+  Optional<Value> _doCall(spawn_protocol.ActorInvocation invocation,
+      Optional<Object> actorInstance, MethodMirror method, Any? payload) {
+    if (invocation.currentContext.state.typeUrl.isEmpty) {
+      return ReflectHelper.invoke(actorInstance.value, method, payload,
+          Context.withState(Optional.empty()));
+    } else {
+      var ctxState = ReflectHelper.createInstance(
+          _statefulNamedActorAnnotationInstance!.stateType);
+
+      var state = invocation.currentContext.state
+          .unpackInto(ctxState as GeneratedMessage);
+
+      return ReflectHelper.invoke(actorInstance.value, method, payload,
+          Context.withState(Optional.of(state)));
+    }
   }
 }
