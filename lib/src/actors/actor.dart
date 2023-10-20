@@ -20,24 +20,24 @@ class Context {
 }
 
 class Value {
-  late Object _state;
-  late Object _value;
+  Optional<Object> _state = Optional.empty();
+  Optional<Object> _value = Optional.empty();
 
-  Object get state {
+  Optional<Object> get state {
     return _state;
   }
 
-  Object get value {
+  Optional<Object> get value {
     return _value;
   }
 
   Value withReponse<R extends GeneratedMessage>(R response) {
-    _value = response;
+    _value = Optional.of(response);
     return this;
   }
 
   Value withState<S extends GeneratedMessage>(S newState) {
-    _state = newState;
+    _state = Optional.of(newState);
     return this;
   }
 }

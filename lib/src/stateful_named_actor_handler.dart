@@ -79,13 +79,24 @@ class StatefulNamedActorHandler implements ActorHandler {
         Value resultValue = result.value;
 
         spawn_protocol.Context updatedCtx = spawn_protocol.Context.create();
-        updatedCtx.state = Any.pack(resultValue.state as GeneratedMessage);
 
-        return spawn_protocol.ActorInvocationResponse.create()
-          ..actorName = invocation.actor.name
-          ..actorSystem = invocation.actor.system
-          ..updatedContext = updatedCtx
-          ..value = Any.pack(resultValue.value as GeneratedMessage);
+        if (resultValue.state.isPresent) {
+          updatedCtx.state =
+              Any.pack(resultValue.state.value as GeneratedMessage);
+        }
+
+        spawn_protocol.ActorInvocationResponse resp =
+            spawn_protocol.ActorInvocationResponse.create();
+
+        resp.actorName = invocation.actor.name;
+        resp.actorSystem = invocation.actor.system;
+        resp.updatedContext = updatedCtx;
+
+        if (resultValue.value.isPresent) {
+          resp.value = Any.pack(resultValue.value.value as GeneratedMessage);
+        }
+
+        return resp;
       }
     }
 
