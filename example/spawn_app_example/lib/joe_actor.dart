@@ -12,6 +12,9 @@ class JoeActor {
       var currentState = ctx.getState().value as State;
       print("Current state is $currentState");
     }
-    return Value();
+
+    return Value()
+      ..withReponse(Reply.create()..response = "dart")
+      ..withState(State.create()..languages.addAll(["erlang, dart"]));
   }
 }

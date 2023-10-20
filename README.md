@@ -43,7 +43,7 @@ message Reply {
 
 ```dart
 import 'package:spawn_app_example/src/generated/protos/domain.pb.dart';
-import 'package:spawn_dart/spawn_dart.dart';
+import 'spawn_dart/spawn_dart.dart';
 
 @StatefulNamedActor(
   'joe',
@@ -52,16 +52,27 @@ import 'package:spawn_dart/spawn_dart.dart';
 class JoeActor {
   @Action()
   Value setLanguage(Request request, Context ctx) {
-    return Value();
+    if (ctx.getState().isPresent) {
+      var currentState = ctx.getState().value as State;
+      print("Current state is $currentState");
+    }
+
+    return Value()
+      ..withReponse(Reply.create()..response = "dart")
+      ..withState(State.create()..languages.addAll(["erlang, dart"]));
   }
 }
 ```
 
 ```dart
 import 'package:spawn_app_example/joe_actor.dart';
-import 'package:spawn_dart/spawn_dart.dart';
+import 'spawn_dart/spawn_dart.dart';
 
 void main() {
-  SpawnSystem().withActor(JoeActor).start();
+  SpawnSystem()
+      .create("spawn-system")
+      .withPort(8091)
+      .withStatefulNamedActor(JoeActor)
+      .start();
 }
 ```

@@ -19,6 +19,27 @@ class Context {
   }
 }
 
-class Value {}
+class Value {
+  late Object _state;
+  late Object _value;
+
+  Object get state {
+    return _state;
+  }
+
+  Object get value {
+    return _value;
+  }
+
+  Value withReponse<R extends GeneratedMessage>(R response) {
+    _value = response;
+    return this;
+  }
+
+  Value withState<S extends GeneratedMessage>(S newState) {
+    _state = newState;
+    return this;
+  }
+}
 
 class ActorRef {}

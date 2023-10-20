@@ -73,21 +73,19 @@ class StatefulNamedActorHandler implements ActorHandler {
     if (actions.containsKey(invocation.actionName)) {
       MethodMirror method = actions[invocation.actionName]!;
 
-      final payload = switch (invocation.whichPayload()) {
-        spawn_protocol.ActorInvocation_Payload.value => invocation.value,
-        spawn_protocol.ActorInvocation_Payload.noop => null,
-        _ => null,
-      };
-
-      Optional<Value> result =
-          _doCall(invocation, actorInstance, method, payload);
+      Optional<Value> result = _doCall(actorInstance.value, method, invocation);
 
       if (result.isPresent) {
-        Value value = result.value;
+        Value resultValue = result.value;
+
+        spawn_protocol.Context updatedCtx = spawn_protocol.Context.create();
+        updatedCtx.state = Any.pack(resultValue.state as GeneratedMessage);
+
         return spawn_protocol.ActorInvocationResponse.create()
           ..actorName = invocation.actor.name
           ..actorSystem = invocation.actor.system
-          ..updatedContext = spawn_protocol.Context.create();
+          ..updatedContext = updatedCtx
+          ..value = Any.pack(resultValue.value as GeneratedMessage);
       }
     }
 
@@ -95,11 +93,17 @@ class StatefulNamedActorHandler implements ActorHandler {
         "Action ${invocation.actionName} not found for Actor ${invocation.actor.name} or Unknown exception during action processing.");
   }
 
-  Optional<Value> _doCall(spawn_protocol.ActorInvocation invocation,
-      Optional<Object> actorInstance, MethodMirror method, Any? payload) {
+  Optional<Value> _doCall(Object actorInstance, MethodMirror method,
+      spawn_protocol.ActorInvocation invocation) {
+    final payload = switch (invocation.whichPayload()) {
+      spawn_protocol.ActorInvocation_Payload.value => invocation.value,
+      spawn_protocol.ActorInvocation_Payload.noop => null,
+      _ => null,
+    };
+
     if (invocation.currentContext.state.typeUrl.isEmpty) {
-      return ReflectHelper.invoke(actorInstance.value, method, payload,
-          Context.withState(Optional.empty()));
+      return ReflectHelper.invoke(
+          actorInstance, method, payload, Context.withState(Optional.empty()));
     } else {
       var ctxState = ReflectHelper.createInstance(
           _statefulNamedActorAnnotationInstance!.stateType);
@@ -107,7 +111,7 @@ class StatefulNamedActorHandler implements ActorHandler {
       var state = invocation.currentContext.state
           .unpackInto(ctxState as GeneratedMessage);
 
-      return ReflectHelper.invoke(actorInstance.value, method, payload,
+      return ReflectHelper.invoke(actorInstance, method, payload,
           Context.withState(Optional.of(state)));
     }
   }
