@@ -80,6 +80,14 @@ class StatefulNamedActorHandler implements ActorHandler {
 
         spawn_protocol.Context updatedCtx = spawn_protocol.Context.create();
 
+        if (resultValue.metadata.isNotEmpty) {
+          updatedCtx.metadata.addAll(resultValue.metadata);
+        }
+
+        if (resultValue.tags.isNotEmpty) {
+          updatedCtx.tags.addAll(resultValue.tags);
+        }
+
         if (resultValue.state.isPresent) {
           updatedCtx.state =
               Any.pack(resultValue.state.value as GeneratedMessage);
@@ -91,9 +99,17 @@ class StatefulNamedActorHandler implements ActorHandler {
         resp.actorName = invocation.actor.name;
         resp.actorSystem = invocation.actor.system;
         resp.updatedContext = updatedCtx;
+        resp.checkpoint = resultValue.checkpoint;
 
         if (resultValue.value.isPresent) {
           resp.value = Any.pack(resultValue.value.value as GeneratedMessage);
+        }
+
+        if (resultValue.workflow.isPresent) {
+          spawn_protocol.Workflow flow = spawn_protocol.Workflow.create();
+
+          // TODO: Set type of workflows here
+          resp.workflow = flow;
         }
 
         return resp;
