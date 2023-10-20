@@ -18,11 +18,6 @@ class Service {
     'content-type': 'application/octet-stream',
   };
 
-  final _dartVersion = () {
-    final version = Platform.version;
-    return version.substring(0, version.indexOf(' '));
-  }();
-
   late String spawnSystem;
   late Map<String, ActorHandler> spawnActorHandlers;
 
