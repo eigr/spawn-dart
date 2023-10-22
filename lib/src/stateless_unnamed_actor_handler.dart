@@ -14,14 +14,47 @@ class StatelessUnNamedActorHandler implements ActorHandler {
   }
 
   @override
-  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
-    // TODO: implement invoke
+  String getRegisteredName() {
+    // TODO: implement getRegisteredName
+    return "";
+  }
+
+  @override
+  List<ActionDefinition> getActionDefinitions() {
+    // TODO: implement getActionDefinitions
     throw UnimplementedError();
   }
 
   @override
-  String getRegisteredName() {
-    // TODO: implement getRegisteredName
-    return "";
+  ActorKind getActorKind() => ActorKind.unnamed;
+
+  @override
+  String getChannel() {
+    // TODO: implement getChannel
+    throw UnimplementedError();
+  }
+
+  @override
+  int getDeactivatedTimeout() {
+    // TODO: implement getDeactivatedTimeout
+    throw UnimplementedError();
+  }
+
+  @override
+  int getSnapshotTimeout() => 0;
+
+  @override
+  int getMaxPoolSize() => 0;
+
+  @override
+  int getMinPoolSize() => 0;
+
+  @override
+  bool isStateful() => false;
+
+  @override
+  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
+    // TODO: implement invoke
+    throw UnimplementedError();
   }
 }

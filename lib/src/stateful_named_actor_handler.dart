@@ -60,6 +60,40 @@ class StatefulNamedActorHandler implements ActorHandler {
   }
 
   @override
+  List<ActionDefinition> getActionDefinitions() {
+    var normalActions = actions.entries
+        .map((name) =>
+            ActionDefinition(ActionDefinitionKind.normal, name as String))
+        .toList();
+
+    // TODO: implement timer actions (normalActions + timerActions)
+    return normalActions;
+  }
+
+  @override
+  ActorKind getActorKind() => ActorKind.named;
+
+  @override
+  String getChannel() => _statefulNamedActorAnnotationInstance!.channel;
+
+  @override
+  int getDeactivatedTimeout() =>
+      _statefulNamedActorAnnotationInstance!.deactivatedTimeout;
+
+  @override
+  int getSnapshotTimeout() =>
+      _statefulNamedActorAnnotationInstance!.snapshotTimeout;
+
+  @override
+  int getMaxPoolSize() => 0;
+
+  @override
+  int getMinPoolSize() => 0;
+
+  @override
+  bool isStateful() => true;
+
+  @override
   spawn_protocol.ActorInvocationResponse handleInvoke(
       spawn_protocol.ActorInvocation invocation) {
     Optional<Object> actorInstance =

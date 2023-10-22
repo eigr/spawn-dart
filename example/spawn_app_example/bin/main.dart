@@ -5,6 +5,7 @@ void main() {
   SpawnSystem()
       .create("spawn-system")
       .withPort(8091)
+      .withProxyPort(9003)
       .withStatefulNamedActor(JoeActor)
       .start();
 }

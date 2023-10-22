@@ -14,14 +14,53 @@ class StatelessPooledActorHandler implements ActorHandler {
   }
 
   @override
-  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
-    // TODO: implement invoke
+  String getRegisteredName() {
+    // TODO: implement getRegisteredName
+    return "";
+  }
+
+  @override
+  List<ActionDefinition> getActionDefinitions() {
+    // TODO: implement getActionDefinitions
     throw UnimplementedError();
   }
 
   @override
-  String getRegisteredName() {
-    // TODO: implement getRegisteredName
-    return "";
+  ActorKind getActorKind() => ActorKind.pooled;
+
+  @override
+  String getChannel() {
+    // TODO: implement getChannel
+    throw UnimplementedError();
+  }
+
+  @override
+  int getDeactivatedTimeout() {
+    // TODO: implement getDeactivatedTimeout
+    throw UnimplementedError();
+  }
+
+  @override
+  int getSnapshotTimeout() => 0;
+
+  @override
+  int getMaxPoolSize() {
+    // TODO: implement getMaxPoolSize
+    throw UnimplementedError();
+  }
+
+  @override
+  int getMinPoolSize() {
+    // TODO: implement getMinPoolSize
+    throw UnimplementedError();
+  }
+
+  @override
+  bool isStateful() => false;
+
+  @override
+  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
+    // TODO: implement invoke
+    throw UnimplementedError();
   }
 }

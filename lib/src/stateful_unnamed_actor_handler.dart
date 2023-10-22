@@ -25,12 +25,6 @@ class StatefulUnNamedActorHandler implements ActorHandler {
   }
 
   @override
-  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
-    // TODO: implement invoke
-    throw UnimplementedError();
-  }
-
-  @override
   String getRegisteredName() {
     String? name = statefulUnNamedActorAnnotationInstance?.name;
     MirrorSystem.getName(_mirror!.simpleName);
@@ -40,5 +34,47 @@ class StatefulUnNamedActorHandler implements ActorHandler {
     }
 
     return name;
+  }
+
+  @override
+  List<ActionDefinition> getActionDefinitions() {
+    // TODO: implement getActionDefinitions
+    throw UnimplementedError();
+  }
+
+  @override
+  ActorKind getActorKind() => ActorKind.unnamed;
+
+  @override
+  String getChannel() {
+    // TODO: implement getChannel
+    throw UnimplementedError();
+  }
+
+  @override
+  int getDeactivatedTimeout() {
+    // TODO: implement getDeactivatedTimeout
+    throw UnimplementedError();
+  }
+
+  @override
+  int getSnapshotTimeout() {
+    // TODO: implement getSnapshotTimeout
+    throw UnimplementedError();
+  }
+
+  @override
+  int getMaxPoolSize() => 0;
+
+  @override
+  int getMinPoolSize() => 0;
+
+  @override
+  bool isStateful() => true;
+
+  @override
+  ActorInvocationResponse handleInvoke(ActorInvocation invocation) {
+    // TODO: implement invoke
+    throw UnimplementedError();
   }
 }

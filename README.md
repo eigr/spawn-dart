@@ -43,7 +43,7 @@ message Reply {
 
 ```dart
 import 'package:spawn_app_example/src/generated/protos/domain.pb.dart';
-import 'spawn_dart/spawn_dart.dart';
+import 'package:spawn_dart/spawn_dart.dart';
 
 @StatefulNamedActor(
   'joe',
@@ -66,7 +66,7 @@ class JoeActor {
 
 ```dart
 import 'package:spawn_app_example/joe_actor.dart';
-import 'spawn_dart/spawn_dart.dart';
+import 'package:spawn_dart/spawn_dart.dart';
 
 void main() {
   SpawnSystem()
